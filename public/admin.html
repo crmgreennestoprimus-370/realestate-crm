@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real Estate CRM - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f5f6fa; color: #2d3436; }
+    
+    /* Sidebar */
+    .sidebar { position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: linear-gradient(180deg, #2d3436 0%, #1a1a2e 100%); color: #fff; padding: 1.5rem; z-index: 100; }
+    .logo { font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+    .logo span { color: #e17055; }
+    .nav-menu { list-style: none; }
+    .nav-item { margin-bottom: 0.5rem; }
+    .nav-link { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem; color: #b2bec3; text-decoration: none; border-radius: 10px; transition: all 0.3s; }
+    .nav-link:hover, .nav-link.active { background: #e17055; color: #fff; }
+    .nav-link i { width: 20px; }
+
+    /* Main Content */
+    .main { margin-left: 260px; padding: 2rem; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .header h1 { font-size: 1.8rem; }
+    .user-info { display: flex; align-items: center; gap: 1rem; }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #e17055; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; }
+
+    /* Dashboard Cards */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-card { background: #fff; padding: 1.5rem; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .stat-card h3 { font-size: 0.9rem; color: #636e72; margin-bottom: 0.5rem; }
+    .stat-card .value { font-size: 2rem; font-weight: 700; color: #2d3436; }
+    .stat-card .change { font-size: 0.85rem; color: #00b894; }
+    .stat-card .change.negative { color: #d63031; }
+    .stat-card i { font-size: 1.5rem; color: #e17055; margin-bottom: 0.5rem; }
+
+    /* Content Sections */
+    .section { display: none; }
+    .section.active { display: block; }
+    
+    .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .content-header h2 { font-size: 1.5rem; }
+    .btn { padding: 0.7rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.3s; }
+    .btn-primary { background: #e17055; color: #fff; }
+    .btn-primary:hover { background: #d63031; }
+    .btn-secondary { background: #dfe6e9; color: #2d3436; }
+
+    /* Tables */
+    .table-container { background: #fff; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #f0f0f0; }
+    th { font-weight: 600; color: #636e72; font-size: 0.85rem; text-transform: uppercase; }
+    tr:hover { background: #f8f9fa; }
+    .status-badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; }
+    .status-active { background: #d4edda; color: #155724; }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-inactive { background: #f8d7da; color: #721c24; }
+    .status-completed { background: #d1ecf1; color: #0c5460; }
+    .priority-high { color: #d63031; font-weight: 600; }
+    .priority-medium { color: #fdcb6e; font-weight: 600; }
+    .priority-low { color: #00b894; font-weight: 600; }
+
+    /* Cards Grid */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .card { background: #fff; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .card-title { font-weight: 600; }
+
+    /* Finance */
+    .finance-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .finance-card { background: #fff; padding: 1.5rem; border-radius: 12px; text-align: center; }
+    .finance-card .label { color: #636e72; font-size: 0.85rem; }
+    .finance-card .amount { font-size: 1.8rem; font-weight: 700; margin-top: 0.5rem; }
+    .finance-card.revenue .amount { color: #00b894; }
+    .finance-card.expense .amount { color: #d63031; }
+    .finance-card.profit .amount { color: #0984e3; }
+    .finance-card.pending .amount { color: #fdcb6e; }
+
+    /* Marketing */
+    .campaign-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .campaign-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 1.5rem; border-radius: 12px; }
+    .campaign-card h4 { font-size: 0.9rem; opacity: 0.8; }
+    .campaign-card .value { font-size: 2rem; font-weight: 700; }
+
+    /* Forms */
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; border: 1px solid #dfe6e9; border-radius: 8px; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+    .modal.active { display: flex; }
+    .modal-content { background: #fff; padding: 2rem; border-radius: 16px; width: 90%; max-width: 500px; }
+    .modal-header { display: flex; justify-content: space-between; margin-bottom: 1.5rem; }
+    .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+
+    /* Action buttons */
+    .action-btns { display: flex; gap: 0.5rem; }
+    .action-btn { padding: 0.4rem 0.8rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    .action-btn.edit { background: #74b9ff; color: #fff; }
+    .action-btn.delete { background: #d63031; color: #fff; }
+
+    @media (max-width: 1200px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .finance-summary { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo"><i class="fas fa-home"></i> <span>Realty</span>CRM</div>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="#" class="nav-link active" onclick="showSection('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+      <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('properties')"><i class="fas fa-building"></i> Properties</a></li>
+      <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('clients')"><i class="fas fa-users"></i> Clients</a></li>
+      <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('tasks')"><i class="fas fa-tasks"></i> Tasks</a></li>
+      <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('marketing')"><i class="fas fa-bullhorn"></i> Marketing</a></li>
+      <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('finance')"><i class="fas fa-dollar-sign"></i> Finance</a></li>
+      <li class="nav-item"><a href="#" class="nav-link" onclick="showSection('agents')"><i class="fas fa-user-tie"></i> Agents</a></li>
+    </ul>
+  </aside>
+
+  <main class="main">
+    <div class="header">
+      <h1>Real Estate Management</h1>
+      <div class="user-info">
+        <span>Admin User</span>
+        <div class="user-avatar">AU</div>
+      </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="section active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <i class="fas fa-building"></i>
+          <h3>Total Properties</h3>
+          <div class="value" id="dashProperties">0</div>
+          <div class="change">Active: <span id="dashPropertiesActive">0</span></div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-users"></i>
+          <h3>Total Clients</h3>
+          <div class="value" id="dashClients">0</div>
+          <div class="change">Active: <span id="dashClientsActive">0</span></div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-clipboard-list"></i>
+          <h3>Pending Tasks</h3>
+          <div class="value" id="dashTasks">0</div>
+          <div class="change">Overdue: 0</div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-dollar-sign"></i>
+          <h3>Net Profit</h3>
+          <div class="value" id="dashProfit">$0</div>
+          <div class="change">This Month</div>
+        </div>
+      </div>
+      
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Recent Properties</span>
+            <button class="btn btn-secondary" onclick="showSection('properties')">View All</button>
+          </div>
+          <div id="recentProperties"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Recent Tasks</span>
+            <button class="btn btn-secondary" onclick="showSection('tasks')">View All</button>
+          </div>
+          <div id="recentTasks"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Properties Section -->
+    <section id="properties" class="section">
+      <div class="content-header">
+        <h2>Properties Management</h2>
+        <button class="btn btn-primary" onclick="openModal('property')"><i class="fas fa-plus"></i> Add Property</button>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Type</th>
+              <th>Price</th>
+              <th>Location</th>
+              <th>Beds/Baths</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="propertiesTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Clients Section -->
+    <section id="clients" class="section">
+      <div class="content-header">
+        <h2>Client Management</h2>
+        <button class="btn btn-primary" onclick="openModal('client')"><i class="fas fa-plus"></i> Add Client</button>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Type</th>
+              <th>Source</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="clientsTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Tasks Section -->
+    <section id="tasks" class="section">
+      <div class="content-header">
+        <h2>Task Management</h2>
+        <button class="btn btn-primary" onclick="openModal('task')"><i class="fas fa-plus"></i> Add Task</button>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Priority</th>
+              <th>Due Date</th>
+              <th>Assigned To</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tasksTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Marketing Section -->
+    <section id="marketing" class="section">
+      <div class="content-header">
+        <h2>Marketing Campaigns</h2>
+        <button class="btn btn-primary" onclick="openModal('campaign')"><i class="fas fa-plus"></i> New Campaign</button>
+      </div>
+      <div class="campaign-stats" id="campaignStats"></div>
+      <div class="content-header"><h3>Active Campaigns</h3></div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Campaign</th>
+              <th>Type</th>
+              <th>Budget</th>
+              <th>Leads</th>
+              <th>Conversions</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="campaignsTable"></tbody>
+        </table>
+      </div>
+      <div class="content-header" style="margin-top: 2rem;"><h3>Recent Leads</h3></div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Source</th>
+              <th>Property Interest</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="leadsTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Finance Section -->
+    <section id="finance" class="section">
+      <div class="content-header">
+        <h2>Financial Overview</h2>
+        <button class="btn btn-primary" onclick="openModal('transaction')"><i class="fas fa-plus"></i> Add Transaction</button>
+      </div>
+      <div class="finance-summary" id="financeSummary"></div>
+      <div class="content-header"><h3>Recent Transactions</h3></div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="transactionsTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Agents Section -->
+    <section id="agents" class="section">
+      <div class="content-header">
+        <h2>Agent Management</h2>
+        <button class="btn btn-primary" onclick="openModal('agent')"><i class="fas fa-plus"></i> Add Agent</button>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Agent Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Properties</th>
+              <th>Sales</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody id="agentsTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add New</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="modalForm" onsubmit="submitForm(event)">
+        <div id="formFields"></div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let properties = [], clients = [], tasks = [], marketing = {}, finance = {}, agents = [];
+    let currentModalType = '';
+
+    async function loadData() {
+      try {
+        const [propRes, clientRes, taskRes, marketRes, financeRes, agentRes, dashRes] = await Promise.all([
+          fetch('/api/properties'), fetch('/api/clients'), fetch('/api/tasks'),
+          fetch('/api/marketing'), fetch('/api/finance'), fetch('/api/agents'), fetch('/api/dashboard')
+        ]);
+        
+        properties = await propRes.json();
+        clients = await clientRes.json();
+        tasks = await taskRes.json();
+        marketing = await marketRes.json();
+        finance = await financeRes.json();
+        agents = await agentRes.json();
+        const dashboard = await dashRes.json();
+
+        updateDashboard(dashboard);
+        renderAll();
+      } catch (err) {
+        console.error('Error loading data:', err);
+      }
+    }
+
+    function updateDashboard(dash) {
+      document.getElementById('dashProperties').textContent = dash.properties.total;
+      document.getElementById('dashPropertiesActive').textContent = dash.properties.active;
+      document.getElementById('dashClients').textContent = dash.clients.total;
+      document.getElementById('dashClientsActive').textContent = dash.clients.active;
+      document.getElementById('dashTasks').textContent = dash.tasks.pending;
+      document.getElementById('dashProfit').textContent = '$' + dash.finance.netProfit.toLocaleString();
+    }
+
+    function renderAll() {
+      renderProperties();
+      renderClients();
+      renderTasks();
+      renderMarketing();
+      renderFinance();
+      renderAgents();
+      renderDashboardCards();
+    }
+
+    function renderProperties() {
+      document.getElementById('propertiesTable').innerHTML = properties.map(p => `
+        <tr>
+          <td><strong>${p.title}</strong></td>
+          <td><span class="status-badge status-${p.type.toLowerCase()}">${p.type}</span></td>
+          <td>$${p.price.toLocaleString()}</td>
+          <td>${p.location}</td>
+          <td>${p.beds} bed / ${p.baths} bath</td>
+          <td><span class="status-badge status-${p.status.toLowerCase()}">${p.status}</span></td>
+          <td class="action-btns">
+            <button class="action-btn edit" onclick="editItem('properties', ${p.id})">Edit</button>
+            <button class="action-btn delete" onclick="deleteItem('properties', ${p.id})">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderClients() {
+      document.getElementById('clientsTable').innerHTML = clients.map(c => `
+        <tr>
+          <td><strong>${c.name}</strong></td>
+          <td>${c.email}</td>
+          <td>${c.phone}</td>
+          <td>${c.type}</td>
+          <td>${c.source}</td>
+          <td><span class="status-badge status-${c.status.toLowerCase()}">${c.status}</span></td>
+          <td class="action-btns">
+            <button class="action-btn edit" onclick="editItem('clients', ${c.id})">Edit</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderTasks() {
+      document.getElementById('tasksTable').innerHTML = tasks.map(t => `
+        <tr>
+          <td><strong>${t.title}</strong></td>
+          <td class="priority-${t.priority.toLowerCase()}">${t.priority}</td>
+          <td>${t.dueDate}</td>
+          <td>${t.assignedTo}</td>
+          <td>${t.category}</td>
+          <td><span class="status-badge status-${t.status.toLowerCase().replace(' ', '-')}">${t.status}</span></td>
+          <td class="action-btns">
+            <button class="action-btn edit" onclick="editItem('tasks', ${t.id})">Update</button>
+            <button class="action-btn delete" onclick="deleteItem('tasks', ${t.id})">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderMarketing() {
+      document.getElementById('campaignStats').innerHTML = `
+        <div class="campaign-card">
+          <h4>Total Leads</h4>
+          <div class="value">${marketing.campaigns.reduce((a, c) => a + c.leads, 0)}</div>
+        </div>
+        <div class="campaign-card">
+          <h4>Total Conversions</h4>
+          <div class="value">${marketing.campaigns.reduce((a, c) => a + c.conversions, 0)}</div>
+        </div>
+        <div class="campaign-card">
+          <h4>Conversion Rate</h4>
+          <div class="value">${((marketing.campaigns.reduce((a, c) => a + c.conversions, 0) / marketing.campaigns.reduce((a, c) => a + c.leads, 0)) * 100).toFixed(1)}%</div>
+        </div>
+      `;
+      
+      document.getElementById('campaignsTable').innerHTML = marketing.campaigns.map(c => `
+        <tr>
+          <td><strong>${c.name}</strong></td>
+          <td>${c.type}</td>
+          <td>$${c.budget.toLocaleString()}</td>
+          <td>${c.leads}</td>
+          <td>${c.conversions}</td>
+          <td><span class="status-badge status-${c.status.toLowerCase()}">${c.status}</span></td>
+        </tr>
+      `).join('');
+
+      document.getElementById('leadsTable').innerHTML = marketing.leads.map(l => `
+        <tr>
+          <td><strong>${l.name}</strong></td>
+          <td>${l.source}</td>
+          <td>${l.property}</td>
+          <td>${l.date}</td>
+          <td><span class="status-badge status-${l.status.toLowerCase()}">${l.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderFinance() {
+      document.getElementById('financeSummary').innerHTML = `
+        <div class="finance-card revenue">
+          <div class="label">Total Revenue</div>
+          <div class="amount">$${finance.summary.totalRevenue.toLocaleString()}</div>
+        </div>
+        <div class="finance-card expense">
+          <div class="label">Total Expenses</div>
+          <div class="amount">$${finance.summary.totalExpenses.toLocaleString()}</div>
+        </div>
+        <div class="finance-card profit">
+          <div class="label">Net Profit</div>
+          <div class="amount">$${finance.summary.netProfit.toLocaleString()}</div>
+        </div>
+        <div class="finance-card pending">
+          <div class="label">Pending Payments</div>
+          <div class="amount">$${finance.summary.pendingPayments.toLocaleString()}</div>
+        </div>
+      `;
+
+      document.getElementById('transactionsTable').innerHTML = finance.transactions.map(t => `
+        <tr>
+          <td>${t.date}</td>
+          <td>${t.type}</td>
+          <td>${t.property}</td>
+          <td style="color: ${t.type === 'Marketing Expense' ? '#d63031' : '#00b894'}">$${t.amount.toLocaleString()}</td>
+          <td><span class="status-badge status-${t.status.toLowerCase()}">${t.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAgents() {
+      document.getElementById('agentsTable').innerHTML = agents.map(a => `
+        <tr>
+          <td><strong>${a.name}</strong></td>
+          <td>${a.email}</td>
+          <td>${a.phone}</td>
+          <td>${a.properties}</td>
+          <td>${a.sales}</td>
+          <td>⭐ ${a.rating}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderDashboardCards() {
+      document.getElementById('recentProperties').innerHTML = properties.slice(0, 3).map(p => `
+        <div style="padding: 0.8rem; border-bottom: 1px solid #eee;">
+          <strong>${p.title}</strong><br>
+          <small style="color: #636e72;">${p.type} - $${p.price.toLocaleString()}</small>
+        </div>
+      `).join('');
+
+      document.getElementById('recentTasks').innerHTML = tasks.slice(0, 3).map(t => `
+        <div style="padding: 0.8rem; border-bottom: 1px solid #eee;">
+          <strong>${t.title}</strong><br>
+          <small style="color: #636e72;">${t.status} - ${t.dueDate}</small>
+        </div>
+      `).join('');
+    }
+
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    const forms = {
+      property: [
+        { name: 'title', label: 'Property Title', type: 'text' },
+        { name: 'type', label: 'Type', type: 'select', options: ['Sale', 'Rent'] },
+        { name: 'price', label: 'Price', type: 'number' },
+        { name: 'location', label: 'Location', type: 'text' },
+        { name: 'beds', label: 'Bedrooms', type: 'number' },
+        { name: 'baths', label: 'Bathrooms', type: 'number' },
+        { name: 'sqft', label: 'Square Feet', type: 'number' },
+        { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Pending', 'Sold'] }
+      ],
+      client: [
+        { name: 'name', label: 'Full Name', type: 'text' },
+        { name: 'email', label: 'Email', type: 'email' },
+        { name: 'phone', label: 'Phone', type: 'tel' },
+        { name: 'type', label: 'Client Type', type: 'select', options: ['Buyer', 'Seller', 'Tenant'] },
+        { name: 'source', label: 'Lead Source', type: 'text' },
+        { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Inactive'] }
+      ],
+      task: [
+        { name: 'title', label: 'Task Title', type: 'text' },
+        { name: 'description', label: 'Description', type: 'textarea' },
+        { name: 'priority', label: 'Priority', type: 'select', options: ['High', 'Medium', 'Low'] },
+        { name: 'dueDate', label: 'Due Date', type: 'date' },
+        { name: 'assignedTo', label: 'Assigned To', type: 'text' },
+        { name: 'category', label: 'Category', type: 'select', options: ['Client', 'Property', 'Marketing', 'Finance'] },
+        { name: 'status', label: 'Status', type: 'select', options: ['Pending', 'In Progress', 'Completed'] }
+      ],
+      campaign: [
+        { name: 'name', label: 'Campaign Name', type: 'text' },
+        { name: 'type', label: 'Type', type: 'select', options: ['Email', 'Social', 'PPC'] },
+        { name: 'budget', label: 'Budget', type: 'number' },
+        { name: 'startDate', label: 'Start Date', type: 'date' },
+        { name: 'endDate', label: 'End Date', type: 'date' },
+        { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Paused', 'Completed'] }
+      ],
+      transaction: [
+        { name: 'type', label: 'Transaction Type', type: 'select', options: ['Commission', 'Rent Payment', 'Marketing Expense', 'Other'] },
+        { name: 'amount', label: 'Amount', type: 'number' },
+        { name: 'property', label: 'Property/Description', type: 'text' },
+        { name: 'date', label: 'Date', type: 'date' },
+        { name: 'status', label: 'Status', type: 'select', options: ['Completed', 'Pending'] }
+      ],
+      agent: [
+        { name: 'name', label: 'Agent Name', type: 'text' },
+        { name: 'email', label: 'Email', type: 'email' },
+        { name: 'phone', label: 'Phone', type: 'tel' }
+      ]
+    };
+
+    function openModal(type) {
+      currentModalType = type;
+      document.getElementById('modalTitle').textContent = 'Add ' + type.charAt(0).toUpperCase() + type.slice(1);
+      const fields = forms[type] || [];
+      document.getElementById('formFields').innerHTML = fields.map(f => `
+        <div class="form-group">
+          <label>${f.label}</label>
+          ${f.type === 'select' ? 
+            `<select name="${f.name}" required><option value="">Select...</option>${f.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>` :
+            f.type === 'textarea' ?
+            `<textarea name="${f.name}" rows="3"></textarea>` :
+            `<input type="${f.type}" name="${f.name}" required>`
+          }
+        </div>
+      `).join('');
+      document.getElementById('modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    async function submitForm(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      
+      const endpoint = {
+        property: '/api/properties',
+        client: '/api/clients',
+        task: '/api/tasks',
+        campaign: '/api/marketing/campaigns',
+        transaction: '/api/finance/transactions'
+      }[currentModalType];
+
+      await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      closeModal();
+      loadData();
+    }
+
+    async function deleteItem(type, id) {
+      if (confirm('Are you sure?')) {
+        await fetch(`/api/${type}/${id}`, { method: 'DELETE' });
+        loadData();
+      }
+    }
+
+    function editItem(type, id) {
+      alert('Edit functionality - data loaded for: ' + type + ' ' + id);
+    }
+
+    loadData();
+  </script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luxury Realty - Find Your Dream Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; color: #1a1a2e; line-height: 1.6; }
+    
+    /* Header */
+    header { background: #fff; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+    .logo { font-size: 1.5rem; font-weight: 700; color: #2d3436; }
+    .logo span { color: #e17055; }
+    nav a { text-decoration: none; color: #636e72; margin: 0 1rem; font-weight: 500; transition: color 0.3s; }
+    nav a:hover { color: #e17055; }
+    .cta-btn { background: #e17055; color: #fff; padding: 0.7rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: transform 0.3s; }
+    .cta-btn:hover { transform: translateY(-2px); }
+
+    /* Hero */
+    .hero { background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600') center/cover; height: 85vh; display: flex; align-items: center; justify-content: center; text-align: center; color: #fff; }
+    .hero-content h1 { font-size: 3.5rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+    .hero-content p { font-size: 1.3rem; margin-bottom: 2rem; opacity: 0.95; }
+    .search-box { background: #fff; padding: 1.5rem; border-radius: 12px; display: flex; gap: 1rem; flex-wrap: wrap; max-width: 900px; }
+    .search-box input, .search-box select { padding: 0.8rem 1rem; border: 1px solid #dfe6e9; border-radius: 8px; flex: 1; min-width: 150px; }
+    .search-box button { background: #e17055; color: #fff; border: none; padding: 0.8rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
+
+    /* Stats */
+    .stats { display: flex; justify-content: space-around; padding: 4rem 5%; background: #f8f9fa; }
+    .stat-item { text-align: center; }
+    .stat-item h3 { font-size: 2.5rem; color: #e17055; }
+    .stat-item p { color: #636e72; }
+
+    /* Properties */
+    .section { padding: 4rem 5%; }
+    .section-title { text-align: center; margin-bottom: 3rem; }
+    .section-title h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .section-title p { color: #636e72; }
+    .property-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+    .property-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: transform 0.3s; }
+    .property-card:hover { transform: translateY(-8px); }
+    .property-img { width: 100%; height: 220px; object-fit: cover; }
+    .property-info { padding: 1.5rem; }
+    .property-price { font-size: 1.5rem; color: #e17055; font-weight: 700; }
+    .property-title { font-size: 1.2rem; margin: 0.5rem 0; }
+    .property-location { color: #636e72; font-size: 0.9rem; display: flex; align-items: center; gap: 0.3rem; }
+    .property-details { display: flex; gap: 1rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee; }
+    .property-details span { font-size: 0.9rem; color: #636e72; }
+    .property-tag { display: inline-block; padding: 0.3rem 0.8rem; background: #00b894; color: #fff; border-radius: 20px; font-size: 0.8rem; margin-bottom: 0.5rem; }
+
+    /* Services */
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+    .service-card { text-align: center; padding: 2rem; background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .service-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .service-card h3 { margin-bottom: 1rem; }
+
+    /* Testimonials */
+    .testimonials { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 4rem 5%; }
+    .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+    .testimonial-card { background: rgba(255,255,255,0.15); padding: 2rem; border-radius: 16px; backdrop-filter: blur(10px); }
+    .testimonial-card p { font-style: italic; margin-bottom: 1rem; }
+    .testimonial-author { font-weight: 600; }
+
+    /* Contact */
+    .contact { background: #f8f9fa; }
+    .contact-container { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; max-width: 1200px; margin: 0 auto; }
+    .contact-form { background: #fff; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .contact-form input, .contact-form textarea { width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid #dfe6e9; border-radius: 8px; }
+    .contact-form button { background: #e17055; color: #fff; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; }
+    .contact-info h3 { margin-bottom: 1rem; }
+    .contact-info p { margin-bottom: 0.5rem; }
+
+    /* Footer */
+    footer { background: #2d3436; color: #fff; padding: 3rem 5%; }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+    .footer-col h4 { margin-bottom: 1rem; color: #e17055; }
+    .footer-col a { display: block; color: #b2bec3; text-decoration: none; margin-bottom: 0.5rem; }
+    .footer-bottom { text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #636e72; }
+
+    @media (max-width: 768px) {
+      .hero-content h1 { font-size: 2rem; }
+      .contact-container { grid-template-columns: 1fr; }
+      header { flex-direction: column; gap: 1rem; }
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Luxury<span>Realty</span></div>
+    <nav>
+      <a href="#properties">Properties</a>
+      <a href="#services">Services</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="/admin" class="cta-btn">Client Portal</a>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Find Your Perfect Home</h1>
+      <p>Discover luxury properties in the most desirable locations</p>
+      <div class="search-box">
+        <input type="text" placeholder="Search by location..." id="searchLocation">
+        <select id="searchType">
+          <option value="">Property Type</option>
+          <option value="Sale">For Sale</option>
+          <option value="Rent">For Rent</option>
+        </select>
+        <select id="searchPrice">
+          <option value="">Price Range</option>
+          <option value="0-500000">Under $500K</option>
+          <option value="500000-1000000">$500K - $1M</option>
+          <option value="1000000+">$1M+</option>
+        </select>
+        <button onclick="searchProperties()">Search</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat-item">
+      <h3>500+</h3>
+      <p>Properties Sold</p>
+    </div>
+    <div class="stat-item">
+      <h3>200+</h3>
+      <p>Happy Clients</p>
+    </div>
+    <div class="stat-item">
+      <h3>15+</h3>
+      <p>Years Experience</p>
+    </div>
+    <div class="stat-item">
+      <h3>50+</h3>
+      <p>Expert Agents</p>
+    </div>
+  </section>
+
+  <section class="section" id="properties">
+    <div class="section-title">
+      <h2>Featured Properties</h2>
+      <p>Explore our curated selection of premium properties</p>
+    </div>
+    <div class="property-grid" id="propertyGrid">
+      <!-- Properties loaded via JS -->
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <div class="section-title">
+      <h2>Our Services</h2>
+      <p>Comprehensive real estate solutions tailored to your needs</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">🏠</div>
+        <h3>Property Buying</h3>
+        <p>Expert guidance through every step of purchasing your dream home</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">📝</div>
+        <h3>Property Selling</h3>
+        <p>Maximize your property value with our proven marketing strategies</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🔑</div>
+        <h3>Rental Services</h3>
+        <p>Find the perfect rental property or list your property for rent</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">💼</div>
+        <h3>Investment Advisory</h3>
+        <p>Strategic investment opportunities with high return potential</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials" id="testimonials">
+    <div class="section-title">
+      <h2>What Our Clients Say</h2>
+      <p>Real stories from satisfied property owners</p>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <p>"The team helped us find our dream home within weeks. Professional and attentive throughout!"</p>
+        <p class="testimonial-author">- Sarah & Michael Johnson</p>
+      </div>
+      <div class="testimonial-card">
+        <p>"Sold my property 15% above asking price. Their marketing strategy is exceptional!"</p>
+        <p class="testimonial-author">- David Williams</p>
+      </div>
+      <div class="testimonial-card">
+        <p>"Best rental experience ever. They found the perfect apartment in our preferred location."</p>
+        <p class="testimonial-author">- Emily Chen</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section contact" id="contact">
+    <div class="section-title">
+      <h2>Get In Touch</h2>
+      <p>Ready to find your perfect property? Let's talk!</p>
+    </div>
+    <div class="contact-container">
+      <div class="contact-form">
+        <h3>Send us a Message</h3>
+        <form onsubmit="submitContact(event)">
+          <input type="text" placeholder="Your Name" required>
+          <input type="email" placeholder="Your Email" required>
+          <input type="tel" placeholder="Phone Number">
+          <textarea rows="5" placeholder="Message" required></textarea>
+          <button type="submit">Send Message</button>
+        </form>
+      </div>
+      <div class="contact-info">
+        <h3>Contact Information</h3>
+        <p><strong>Address:</strong> 123 Luxury Lane, Beverly Hills, CA 90210</p>
+        <p><strong>Phone:</strong> (555) 123-4567</p>
+        <p><strong>Email:</strong> info@luxuryrealty.com</p>
+        <p><strong>Hours:</strong> Mon-Fri: 9AM-7PM, Sat: 10AM-5PM</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>LuxuryRealty</h4>
+        <p>Your trusted partner in finding the perfect property since 2010.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="#properties">Properties</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="#">Buying</a>
+        <a href="#">Selling</a>
+        <a href="#">Renting</a>
+      </div>
+      <div class="footer-col">
+        <h4>Follow Us</h4>
+        <a href="#">Facebook</a>
+        <a href="#">Instagram</a>
+        <a href="#">LinkedIn</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Luxury Realty. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    let properties = [];
+
+    async function loadProperties() {
+      try {
+        const response = await fetch('/api/properties');
+        properties = await response.json();
+        displayProperties(properties);
+      } catch (error) {
+        console.error('Error loading properties:', error);
+      }
+    }
+
+    function displayProperties(props) {
+      const grid = document.getElementById('propertyGrid');
+      grid.innerHTML = props.map(p => `
+        <div class="property-card">
+          <img src="${p.image}" alt="${p.title}" class="property-img">
+          <div class="property-info">
+            <span class="property-tag">${p.type}</span>
+            <div class="property-price">${p.type === 'Rent' ? '$' + p.price.toLocaleString() + '/mo' : '$' + p.price.toLocaleString()}</div>
+            <h3 class="property-title">${p.title}</h3>
+            <p class="property-location">📍 ${p.location}</p>
+            <div class="property-details">
+              <span>🛏️ ${p.beds} Beds</span>
+              <span>🚿 ${p.baths} Baths</span>
+              <span>📐 ${p.sqft} sqft</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function searchProperties() {
+      const location = document.getElementById('searchLocation').value.toLowerCase();
+      const type = document.getElementById('searchType').value;
+      
+      const filtered = properties.filter(p => {
+        const matchLocation = !location || p.location.toLowerCase().includes(location);
+        const matchType = !type || p.type === type;
+        return matchLocation && matchType;
+      });
+      
+      displayProperties(filtered);
+    }
+
+    function submitContact(e) {
+      e.preventDefault();
+      alert('Thank you for your message! We will contact you soon.');
+    }
+
+    loadProperties();
+  </script>
+</body>
+</html>
